@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aritmetica.cs" />
+    <Compile Include="Correlacao.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

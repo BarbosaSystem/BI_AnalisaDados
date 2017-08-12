@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace BI_AnalisaDados
 {
@@ -24,13 +25,20 @@ namespace BI_AnalisaDados
         Aritmetica produto_A;
         List<Aritmetica> listProduct = new List<Aritmetica>();
         DataSet ds = new DataSet();
+
+        int[] list;
+        int[] listB;
         private void button3_Click(object sender, EventArgs e)
         {
-
+            chart1.Series[0].Points.DataBindXY(list, listB);
+            //// Set title
+            //chart1.Titles.Add("Animals");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            btAnalisar.Enabled = false;
+            btVisualizar.Enabled = false;
             // define as propriedades do controle
              //OpenFileDialog
              this.ofd1.Multiselect = true;
@@ -58,22 +66,24 @@ namespace BI_AnalisaDados
 
                 conexao = new OleDbConnection(@"Provider = Microsoft.ACE.OLEDB.12.0; Data Source= "+ textBox1.Text+"; Extended Properties ='Excel 12.0 Xml; HDR = YES';");
                 adapter = new OleDbDataAdapter("select * from[Plan1$]", conexao);
-                
+                btAnalisar.Enabled = true;
             }
         }
 
         private void btAnalisar_Click(object sender, EventArgs e)
         {
-            
+            list = null;
+            listB = null;
             try
             {
-
-                int[] list = new int[5];
-                int[] listB = new int[5];
-                //array[0] = min ; array[1] = max ; array[2] = soma ; array[3] = media
                 int count = 0;
                 conexao.Open();
                 adapter.Fill(ds);
+
+
+                Array.Resize(ref list, ds.Tables[0].Rows.Count);
+                Array.Resize(ref listB, ds.Tables[0].Rows.Count);
+
                 foreach (DataRow linha in ds.Tables[0].Rows)
                 {
                     int valor = Convert.ToInt16(linha["A"]);
@@ -85,14 +95,16 @@ namespace BI_AnalisaDados
                     count++;
                 }
 
-                produto_A = new Aritmetica("Produto A", list);
-                produto_B = new Aritmetica("Produto B", listB);
+                produto_A = new Aritmetica("Matriz A", list);
+                produto_B = new Aritmetica("Matriz B", listB);
                 
                 listProduct.Add(produto_A);
                 listProduct.Add(produto_B);
 
 
                 dataGridView1.DataSource = listProduct;
+                label3.Text = Correlacao.CorrerPearson(list, listB).ToString("N2");
+                btVisualizar.Enabled = true;
             }
             catch (Exception ex)
             {
