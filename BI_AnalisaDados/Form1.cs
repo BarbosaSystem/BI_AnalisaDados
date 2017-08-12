@@ -37,6 +37,7 @@ namespace BI_AnalisaDados
 
         private void button1_Click(object sender, EventArgs e)
         {
+            textBox1.Text = "";
             btAnalisar.Enabled = false;
             btVisualizar.Enabled = false;
             // define as propriedades do controle
